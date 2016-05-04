@@ -2,6 +2,7 @@ import java.math.BigInteger;
 import java.util.zip.DataFormatException;
 
 import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
 
 public interface AppECI {
@@ -14,7 +15,7 @@ public interface AppECI {
 	 * @return curve params
 	 * @throws DataFormatException 
 	 */
-	public X9ECParameters newEC(int field, BigInteger a, BigInteger b ) throws DataFormatException;
+	public ECParameterSpec newEC(int field, BigInteger a, BigInteger b ) throws DataFormatException;
 	
 	/**
 	 * Load EC from current params
