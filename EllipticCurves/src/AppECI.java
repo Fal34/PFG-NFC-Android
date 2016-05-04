@@ -1,4 +1,5 @@
 import java.math.BigInteger;
+import java.util.zip.DataFormatException;
 
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.math.ec.ECPoint;
@@ -11,8 +12,9 @@ public interface AppECI {
 	 * @param a
 	 * @param b
 	 * @return curve params
+	 * @throws DataFormatException 
 	 */
-	public X9ECParameters newEC(int field, BigInteger a, BigInteger b );
+	public X9ECParameters newEC(int field, BigInteger a, BigInteger b ) throws DataFormatException;
 	
 	/**
 	 * Load EC from current params
@@ -51,8 +53,9 @@ public interface AppECI {
 	 * @param x
 	 * @param y
 	 * @return ECPoint
+	 * @throws CurveNotLoaded
 	 */
-	public ECPoint getPoint(BigInteger x, BigInteger y);
+	public ECPoint getPoint(BigInteger x, BigInteger y) throws CurveNotLoaded;
 	
 	/**
 	 * Add the point p1 to point p1 n times
