@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_margin"
+    android:background="@color/blue_logo"
+    tools:context=".AboutFragment">
+
+    <ImageView
+        android:id="@+id/icon_about_logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@string/img"
+        android:src="@drawable/ic_all_inclusive"
+        android:tint="@color/white"
+        />
+
+    <View
+        android:id="@+id/users_list_table_separator_line"
+        android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:background="#e2dddd"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/about"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/about_2"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        />
+
+    <ImageView
+        android:id="@+id/read_nfc_stress"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/uc_logo_small"
+        android:contentDescription="@string/unican"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/about_3"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:layout_marginTop="5dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        />
+
+</LinearLayout>

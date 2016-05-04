@@ -1,0 +1,93 @@
+<resources>
+    <!-- General -->
+    <string name="app_name">FNFC</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_about">Acerca de</string>
+    <!-- End General -->
+
+    <!-- Basics -->
+    <string name="home">Inicio</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="accept">Aceptar</string>
+    <string name="close">Cerrar</string>
+    <string name="create">Crear</string>
+    <string name="img">Imagen</string>
+    <string name="cancel">Cancelar</string>
+    <string name="continu">Continuar</string>
+    <string name="look">Ver</string>
+    <string name="content_main_text_head">Fidel Abascal López</string>
+    <string name="unican">UNICAN</string>
+    <string name="content_main_text_body">Comunicación segura en NFC.\nProyecto Fin de Grado - UC.</string>
+    <string name="about">Esta aplicación utiliza NFC Tags (NFC-T) para la escritura  y lectura de las mismas. Aplicadas dentro de un sistema de gestión y autenticación, se utilizan de forma óptima los recursos espaciales de las NFC-T; aprovechando la capacidad de la criptografía en curvas elípticas para asegurar la identidad asignada en cada una de las NFC-T creadas.</string>
+    <string name="about_2">Desarrollado por Fidel Abascal para el trabajo fin de grado - Comunicación Segura en NFC</string>
+    <string name="about_3">Grado en ingeniería informática. Facultad de Ciencias\nUniversidad de Cantabria.</string>
+    <string name="error_or_empty_nfc">Etiqueta vacía o no válida</string>
+    <!-- End Basics -->
+
+    <!-- Register User -->
+    <string name="register_procedure">Se va a proceder a registrar un nuevo usuario que no posea una asignación en el sistema.</string>
+    <string name="select_user">Seleccione a un usuario:</string>
+    <string name="error_user_register">Fallo al registrar al usuario</string>
+    <string name="success_user_register">Aproxime la NFC-T para el nuevo usuario</string>
+    <string name="user_create">Creación de usuario</string>
+    <string name="write_ok">Escritura realizada con éxito.</string>
+    <string name="user_create_confirm">Se va a asignar una identificación del usuario en el sistema. Deberá tener preparado la NFC-T para completar el registro. ¿Desea continuar?</string>
+    <string name="user_key_uses">Nº de usos:</string>
+
+    <!-- End Register User -->
+
+    <!-- Menu Main -->
+    <string name="menu">Menú</string>
+    <string name="menu_management">Administración</string>
+    <string name="menu_service">Autentificación</string>
+    <string name="deployment">Despliegue</string>
+    <string name="read_nfc">Leer NFC-T</string>
+    <string name="verify_nfc">Verificar NFC-T</string>
+    <string name="new_user">Nuevo Usuario</string>
+    <string name="list_users">Ver Usuarios</string>
+    <string name="title_activity_menu_left">MenuLeftActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- End Menu Main -->
+
+    <!-- Users List -->
+    <string name="number_symbol">#</string>
+    <string name="p">P</string>
+    <string name="q">Q</string>
+    <string name="key">Key</string>
+    <string name="error_no_users">No hay usuarios disponibles</string>
+    <string name="user">User</string>
+    <!-- End Users List -->
+
+    <!-- Read NFC -->
+    <string name="bring_close_nfc">Acerque el NFC-T para verificar</string>
+    <string name="active_your_nfc">(*NFC activo requerido)</string>
+    <string name="result">Resultado</string>
+    <string name="validated">Autenticación con éxito</string>
+    <string name="not_validated">Autenticación fallida</string>
+    <!-- End Read NFC -->
+
+    <!-- Administration -->
+    <string name="system">Sistema</string>
+    <string name="restart_default_values">Restaurar valores por defecto</string>
+    <string name="db_restart">Restaurar BBDD</string>
+    <string name="db_restart_confirm">Se van a borrar todos los cambios realizados. ¿Está seguro de desea restaurar la base de datos?</string>
+    <string name="db">Base de datos</string>
+    <string name="success_db_restart">Base de Datos restaurada correctamente</string>
+    <string name="error_db_restart">Error al restaurar la Base de Datos</string>
+    <string name="system_config">Configuración del Sistema</string>
+    <string name="ec_elements">Elementos de la curva elíptica</string>
+    <string name="ec_definition">(y^2 = x^3 + ax + b ∈ G(2^campo))</string>
+    <string name="field">Campo</string>
+    <string name="A">A</string>
+    <string name="B">B</string>
+    <string name="error_empty_fields">Rellene todos los campos</string>
+    <string name="error_ec_constrains">Para evitar singularidades el discriminante no puede ser cero (Valores A=4 y B=27)</string>
+    <string name="new_ec_success">La nueva curva elíptica se ha guardado correctamente</string>
+    <string name="ec_restart">Nueva curva elíptica</string>
+    <string name="ec_restart_confirm">Se va a generar una curva elíptica en función de los parámetros indicados.\n\nSe borrarán los datos del sistema actual. ¿Desea continuar?</string>
+    <string name="new_system_info">Al desplegar una nueva configuración se eliminará la actual.\nComplete los siguientes campos de la curva elíptica a generar y pulse \'Crear\'. Una vez finalizado podrá continuar asignando usuarios al nuevo sistema.</string>
+
+    <!-- Administration -->
+
+</resources>

@@ -1,0 +1,52 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <!-- Home item -->
+        <item
+            android:id="@+id/menu_home"
+            android:icon="@drawable/ic_apps"
+            android:title="@string/home"/>
+        <!-- About Item -->
+        <item
+            android:id="@+id/menu_about"
+            android:icon="@drawable/ic_person"
+            android:title="@string/action_about"/>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <!-- Administration menú Elements -->
+        <item
+            android:id="@+id/navigation_management"
+            android:title="@string/menu_management">
+            <menu>
+                <item
+                    android:id="@+id/menu_deployment"
+                    android:icon="@drawable/ic_power_settings"
+                    android:title="@string/deployment"
+                    />
+                <item
+                    android:id="@+id/menu_opcion_register"
+                    android:icon="@drawable/ic_enhanced_encryption"
+                    android:title="@string/new_user"
+                    />
+                <item
+                    android:id="@+id/menu_opcion_list"
+                    android:icon="@drawable/ic_storage"
+                    android:title="@string/list_users"
+                    />
+            </menu>
+        </item>
+
+        <!-- Service NFC Reader Elements -->
+        <item
+            android:id="@+id/navigation_service"
+            android:title="@string/menu_service">
+            <menu>
+                <item
+                    android:id="@+id/menu_opcion_verify"
+                    android:icon="@drawable/ic_verified_user"
+                    android:title="@string/verify_nfc"/>
+            </menu>
+        </item>
+    </group>
+</menu>

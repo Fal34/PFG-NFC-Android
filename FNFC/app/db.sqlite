@@ -1,0 +1,22 @@
+CREATE TABLE Users(
+   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name TEXT
+);
+
+
+CREATE TABLE Keys(
+   key_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   user_id INTEGER,
+   p TEXT,
+   q INTEGER,
+   val TEXT
+);
+
+CREATE TABLE EllipticCurves(
+   ec_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   field INTEGER,
+   a INTEGER,
+   b INTEGER,
+   k INTEGER,
+   r INTEGER
+);
