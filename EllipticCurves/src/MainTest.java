@@ -9,8 +9,8 @@ public class MainTest {
 	public static void main(String[] args) {
 		AppECI aec = new AppEllipticCurve();
 		
-		BigInteger a = new BigInteger("5"),b = new BigInteger("3");
-		int field = 7;
+		BigInteger a = new BigInteger("1"),b = new BigInteger("6");
+		int field = 11;
 		
 		ECParameterSpec params = null;
 		try {

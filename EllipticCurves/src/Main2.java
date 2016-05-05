@@ -30,11 +30,7 @@ public class Main2 {
 		
 		
 		System.out.println("Punto G :" + g.toString());
-		System.out.println("Punto Aleatorio :" + randomPoint.toString());
-		
-		
-		
-		
+		System.out.println("Punto Aleatorio :" + randomPoint.toString());		
 	}
 	
 	public static X9ECParameters createParameters()

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Random;
 
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
@@ -13,8 +14,9 @@ public class Main {
 	public static void main(String[] args) {
 				
 		Random random = new Random();
-		X9ECParameters x9 = NISTNamedCurves.getByName("P-224"); // or whatever curve you want to use
+		X9ECParameters x9 = ECNamedCurveTable.getByName("prime239v1"); // or whatever curve you want to use
 		ECPoint g = x9.getG();
+		
 		BigInteger n = x9.getN();
 		int nBitLength = n.bitLength();
 		BigInteger x;

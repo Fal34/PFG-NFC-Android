@@ -68,19 +68,26 @@ public class AppEllipticCurve implements AppECI{
 	    BigInteger w2 = new BigInteger(p2.getXCoord().getEncoded());
 	    BigInteger z2 = new BigInteger(p2.getYCoord().getEncoded());
 	    ECPoint newp2 = ecurve.createPoint(w2, z2);
+	    
+	    System.out.println("P is " + p.toString());
+	    System.out.println("P2 is " + p2.toString());
+	    ECPoint customP2 = addPointsCustom(p,p);
+	    
+	    System.out.println("Custom P2 is " + customP2.toString());
+	    System.out.println("Is P2 equals to customP2? " + p2.equals(customP2));
 	    //System.out.println("W is " + w.toString());
 	    //System.out.println("Z is " + z.toString());
 	    //System.out.println("P is " + p.toString());
 	    //System.out.println("Is P equals to new P? " + p.equals(newp));
 	    //System.out.println("new P is " + newp.toString());
 	    
-	    System.out.println("P is valid? " + p.isValid());
-	    System.out.println("P2 is valid? " + p2.isValid());
-	    System.out.println("new P2 is valid? " + newp2.isValid());
-	    
-	    System.out.println("2P is " + p2.toString());	    
-	    System.out.println("new P2 is " + newp2.toString());
-	    System.out.println("Is P2 equals to new P2? " + p2.equals(newp2));
+//	    System.out.println("P is valid? " + p.isValid());
+//	    System.out.println("P2 is valid? " + p2.isValid());
+//	    System.out.println("new P2 is valid? " + newp2.isValid());
+//	    
+//	    System.out.println("2P is " + p2.toString());	    
+//	    System.out.println("new P2 is " + newp2.toString());
+//	    System.out.println("Is P2 equals to new P2? " + p2.equals(newp2));
 	    //System.out.println("P is valid? ");
 	    
 	    // Set X9Params
@@ -103,6 +110,63 @@ public class AppEllipticCurve implements AppECI{
 		return params;
 	}
 
+	/**
+	 * Gets a random point 'g' generator
+	 * 
+	 * Following the generic algorithm of add points
+	 */
+	public ECPoint getG(ECCurve ec){
+		// Set random points of a generator
+		
+		BigInteger x,y;
+		
+		// ec.createPoint(x, y);
+		
+		return null;
+	}
+	
+	public ECPoint addPointsCustom(ECPoint p1, ECPoint p2){
+		ECCurve ec = p1.getCurve();
+		BigInteger a = ec.getA().toBigInteger();
+		BigInteger x1 = p1.getAffineXCoord().toBigInteger();
+		BigInteger x2 = p2.getAffineXCoord().toBigInteger();
+		BigInteger y1 = p1.getAffineYCoord().toBigInteger();
+		BigInteger y2 = p2.getAffineYCoord().toBigInteger();
+		BigInteger x3,y3,lambda;
+		
+		for (int gt :ECCurve.F2m.getAllCoordinateSystems()){
+			System.out.println("element : "+ gt);
+		}
+		// Lambda depens if p1==p2
+		if(!p1.equals(p2)){
+			// (y2-y1)/(x2-x1)
+			lambda = (y2.subtract(y1))
+						.divide(x2.subtract(x1));
+		}
+		// p1==p2
+		else{
+			// (3(x2)^2+a)/2y1)
+			lambda = (((x1.pow(2)).multiply(new BigInteger("3"))).add(a))
+						.divide(y1.multiply(new BigInteger("2")));
+		}
+		// Lambda mod field
+		lambda = lambda.mod(new BigInteger("2").pow(ec.getOrder().intValue()));
+		//lambda = lambda.mod(ec.getOrder());
+		
+		// Set result from lambda
+		x3 = ((lambda.pow(2)).subtract(x1)).subtract(x2);
+		y3 = (lambda.multiply(x1.subtract(x3))).subtract(y1);
+		
+		// Normalize
+		x3 = x3.mod(new BigInteger("2").pow(ec.getOrder().intValue()));
+		y3 = y3.mod(new BigInteger("2").pow(ec.getOrder().intValue()));
+
+		System.out.println("Point ["+ x3 +","+ y3 +"]" );
+		return ec.createPoint(x3, y3);
+	}
+	
+	
+	
 	/**
 	 * Check if number is prime
 	 * @param n

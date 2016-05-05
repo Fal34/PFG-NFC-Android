@@ -1,3 +1,4 @@
+package tet;
 import java.math.BigInteger;
 import java.util.zip.DataFormatException;
 
@@ -14,20 +15,17 @@ public interface AppECI {
 	 * @param b
 	 * @return curve params
 	 * @throws DataFormatException 
+	 * @throws CurveNotLoaded 
 	 */
-	public ECParameterSpec newEC(int field, BigInteger a, BigInteger b ) throws DataFormatException;
+	public X9ECParameters newEC(String curveName) throws IllegalArgumentException , CurveNotLoaded;
 	
 	/**
-	 * Load EC from current params
-	 * Need the generated seed
-	 * @param field
-	 * @param a
-	 * @param b
-	 * @param seed
+	 * Load EC params from given curveName
+	 * @param curveName
 	 * @return curve params
 	 */
-	public X9ECParameters loadEC(int field, BigInteger a, BigInteger b, byte[] seed);
-
+	 X9ECParameters loadEC(String curveName);
+	
 	/**
 	 * Generate a new pair of BigIntegers of random private keys
 	 * @return tuple of K and R values
@@ -81,6 +79,8 @@ public interface AppECI {
 	 * @return [x,y] values
 	 */
 	public BigInteger[] getECPointCoords(ECPoint p1);
+
+	
 
 	
 }
