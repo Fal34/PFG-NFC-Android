@@ -35,7 +35,7 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         Log.i("AppDbSQLiteHelper", "DB Open!");
         // Uncomment when db update
-        initDefaultEntries(db);
+        // initDefaultEntries(db);
     }
 
     @Override
@@ -69,17 +69,14 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
                 "   user_id TEXT," +
                 "   p TEXT," +
                 "   q INTEGER," +
+                "   set_q INTEGER," +
                 "   val TEXT," +
                 "   FOREIGN KEY(user_id) REFERENCES Users(user_id) ON DELETE CASCADE" +
                 ");";
         String table3 = "CREATE TABLE EllipticCurves(" +
                 "   ec_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "   field TEXT," +
-                "   a TEXT," +
-                "   b TEXT," +
-                "   k TEXT," +
-                "   r TEXT," +
-                "   seed TEXT" +
+                "   name TEXT," +
+                "   k TEXT" +
                 ");";
         String sqlCreate = table1+ table2 + table3;
 
@@ -101,12 +98,8 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         // EC
         newEntry = new ContentValues();
         newEntry.put("ec_id", 0);
-        newEntry.put("field", "25");
-        newEntry.put("a", "1");
-        newEntry.put("b", "2");
-        newEntry.put("k", "33333");
-        newEntry.put("r", "44444");
-        newEntry.put("seed", "123");
+        newEntry.put("name", "c2pnb163v1");
+        newEntry.put("k", "838828326113658401440043399564525405856963575389");
         db.insert("EllipticCurves", null, newEntry);
 
         // 1º
@@ -118,9 +111,11 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry = new ContentValues();
         newEntry.put("key_id", 0);
         newEntry.put("user_id", "AAA1");
-        newEntry.put("q", 10);
-        newEntry.put("p", "AAAAAAAAAAAAAAAAAA");
-        newEntry.put("val", "asdj90TSk6JOS$jks54&JK$5345");
+        newEntry.put("q", 12);
+        newEntry.put("set_q", 12);
+        newEntry.put("p", "751012021171870452122918090790420094175625927151260");
+        newEntry.put("val", "756620029338740724273078556156344245242171310654053");
+        // Correct NFC-T value QUFBMSw3NDg4NTc2MzQ1OTgzMjQ0MDI3NzU0NjU0OTE2MzU3MDU1MjM4MDk2NjUyNTIyODE0Nzk=
         db.insert("Keys", null, newEntry);
 
         // 2º
@@ -133,8 +128,10 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry.put("key_id", 1);
         newEntry.put("user_id", "BBB1");
         newEntry.put("q", 11);
-        newEntry.put("p", "BBBBBBBBBBBBBBBBB");
-        newEntry.put("val", "bsadaarrsds4544132&JK$5345");
+        newEntry.put("set_q", 11);
+        newEntry.put("p", "749625052286325696773395092432110531154728259913960");
+        newEntry.put("val", "748604342202344059562009720188517464986466483459791");
+        // Correct NFC-T value QkJCMSwxMTMzMjMyNTA1ODA1OTE3MTQ5ODk2ODk2MDMxNDg3NjQ3NDY0OTM2NjE3NzQxMjYxNjEw
         db.insert("Keys", null, newEntry);
 
         // 3º
@@ -146,9 +143,11 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry = new ContentValues();
         newEntry.put("key_id", 2);
         newEntry.put("user_id", "CCC1");
-        newEntry.put("q", 12);
-        newEntry.put("p", "CCCCCCCCCCCCCCCCC");
-        newEntry.put("val", "csdjasd354AGAR344123fh6dfgDF");
+        newEntry.put("q", 10);
+        newEntry.put("set_q", 10);
+        newEntry.put("p", "1133766180472940559559092094346106918804428817663744");
+        newEntry.put("val", "750958089461982330060227610117491527585509164263455");
+        // Correct NFC-T value Q0NDMSwxMTI1Mjc1NzQwMzU1NDkwNzA0ODU0ODI4MDg5MzI1NDY4MTU3NDg3NDIwMjA3Mzk1NTkx
         db.insert("Keys", null, newEntry);
 
         // 4º
@@ -160,9 +159,11 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry = new ContentValues();
         newEntry.put("key_id", 3);
         newEntry.put("user_id", "DDD1");
-        newEntry.put("q", 2);
-        newEntry.put("p", "DDDDDDDDDDDDDDD");
-        newEntry.put("val", "aisjdoij4oijRJPOIJkjmsasd");
+        newEntry.put("q", 4);
+        newEntry.put("set_q", 4);
+        newEntry.put("p", "1131939708685729064218967552048319698271733323874032");
+        newEntry.put("val", "1129524977008033452470965922928541402746439226182454");
+        // Correct NFC-T value REREMSwxMTI4OTcwMDMwMDc0ODcyNTM2NTQxOTE4MDE1NjA1Nzk1OTY0MTc0Nzk3NTcxMTU4NTc4
         db.insert("Keys", null, newEntry);
 
         // 5º
@@ -174,9 +175,11 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry = new ContentValues();
         newEntry.put("key_id", 4);
         newEntry.put("user_id", "FFF1");
-        newEntry.put("q", 2);
-        newEntry.put("p", "FFFFFFFFFFFFFFF");
-        newEntry.put("val", "sfeGDDIGOKDgdLGJSJEasd256184");
+        newEntry.put("q", 3);
+        newEntry.put("set_q", 3);
+        newEntry.put("p", "1130691625499494260672214820340173855464238755368475");
+        newEntry.put("val", "757384461553174506009490769200927317615180960694701");
+        // Correct NFC-T value RkZGMSwxMTI0NjM1MDYxNzA4NzE2MjU4MTg4NjMwNDM2NTc5OTc3ODY3MTM5MTAzNDczNDQ0MDM3
         db.insert("Keys", null, newEntry);
 
         // 6º Users no registered
@@ -193,12 +196,12 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static Cursor getUsersInfo(SQLiteDatabase db){
-        String query = "SELECT Users.name, Users.user_id, Keys.p, Keys.q, Keys.val FROM Keys, Users WHERE Users.user_id=Keys.user_id";
+        String query = "SELECT Users.name, Users.user_id, Keys.p, Keys.q, Keys.set_q, Keys.val FROM Keys, Users WHERE Users.user_id=Keys.user_id";
         return db.rawQuery(query,null);
     }
 
     public static Cursor getUserInfo(SQLiteDatabase db, String userId){
-        String query = "SELECT Keys.p, Keys.q, Keys.val FROM Keys WHERE Keys.user_id = \"" + userId+"\"";
+        String query = "SELECT Keys.p, Keys.q, Keys.set_q, Keys.val FROM Keys WHERE Keys.user_id = \"" + userId+"\"";
         return db.rawQuery(query,null);
     }
 
@@ -213,6 +216,10 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         return db.rawQuery(query,null);
     }
 
+    public static void deleteUserFromDB(SQLiteDatabase db, String userID) {
+        db.delete("Keys", "user_id = ?", new String[] { userID });
+    }
+
     public static void prepareNewSystem(SQLiteDatabase db) {
         db.delete("Keys", null, null);
         db.delete("EllipticCurves", null, null);
@@ -220,12 +227,8 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
 
     public static void setNewSystem(SQLiteDatabase db, String... values){
         ContentValues newEntry = new ContentValues();
-        newEntry.put("field", values[0]);
-        newEntry.put("a",  values[1]);
-        newEntry.put("b",  values[2]);
-        newEntry.put("k",  values[3]);
-        newEntry.put("r",  values[4]);
-        newEntry.put("seed", values[5]);
+        newEntry.put("name", values[0]);
+        newEntry.put("k", values[1]);
         db.insert("EllipticCurves", null, newEntry);
     }
 
@@ -234,7 +237,8 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
         newEntry.put("user_id", values[0]);
         newEntry.put("p",  values[1]);
         newEntry.put("q",  values[2]);
-        newEntry.put("val",  values[3]);
+        newEntry.put("set_q",  values[3]);
+        newEntry.put("val",  values[4]);
         db.insert("Keys", null, newEntry);
     }
 

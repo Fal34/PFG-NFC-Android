@@ -11,6 +11,7 @@
     <string name="accept">Aceptar</string>
     <string name="close">Cerrar</string>
     <string name="create">Crear</string>
+    <string name="select_dropdown">Seleccione …</string>
     <string name="img">Imagen</string>
     <string name="cancel">Cancelar</string>
     <string name="continu">Continuar</string>
@@ -54,7 +55,8 @@
     <string name="number_symbol">#</string>
     <string name="p">P</string>
     <string name="q">Q</string>
-    <string name="key">Key</string>
+    <string name="original_q">Old Q</string>
+    <string name="value">Value</string>
     <string name="error_no_users">No hay usuarios disponibles</string>
     <string name="user">User</string>
     <!-- End Users List -->
@@ -74,10 +76,13 @@
     <string name="db_restart_confirm">Se van a borrar todos los cambios realizados. ¿Está seguro de desea restaurar la base de datos?</string>
     <string name="db">Base de datos</string>
     <string name="success_db_restart">Base de Datos restaurada correctamente</string>
+    <string name="success_new_ec">Nueva curva asignada correctamente</string>
     <string name="error_db_restart">Error al restaurar la Base de Datos</string>
+    <string name="error_new_ec">Fallo al crear la nueva curva elíptica</string>
     <string name="system_config">Configuración del Sistema</string>
-    <string name="ec_elements">Elementos de la curva elíptica</string>
-    <string name="ec_definition">(y^2 = x^3 + ax + b ∈ G(2^campo))</string>
+    <string name="ec_elements">Definición de la curva elíptica</string>
+    <string name="ec_definition">(y^2 + xy = x^3 + ax + b ∈ G(2^m))</string>
+    <string name="curve_name">Nombre de curva</string>
     <string name="field">Campo</string>
     <string name="A">A</string>
     <string name="B">B</string>
@@ -85,9 +90,42 @@
     <string name="error_ec_constrains">Para evitar singularidades el discriminante no puede ser cero (Valores A=4 y B=27)</string>
     <string name="new_ec_success">La nueva curva elíptica se ha guardado correctamente</string>
     <string name="ec_restart">Nueva curva elíptica</string>
-    <string name="ec_restart_confirm">Se va a generar una curva elíptica en función de los parámetros indicados.\n\nSe borrarán los datos del sistema actual. ¿Desea continuar?</string>
-    <string name="new_system_info">Al desplegar una nueva configuración se eliminará la actual.\nComplete los siguientes campos de la curva elíptica a generar y pulse \'Crear\'. Una vez finalizado podrá continuar asignando usuarios al nuevo sistema.</string>
+    <string name="ec_restart_confirm">Se va a generar una curva elíptica en función de la curva seleccionada.\n\nSe borrarán los datos del sistema actual. ¿Desea continuar?</string>
+    <string name="new_system_info">Al desplegar una nueva configuración se eliminará la actual.\nSeleccione la curva elíptica a generar y pulse \'Crear\'. Una vez finalizado podrá continuar asignando usuarios al nuevo sistema.</string>
 
     <!-- Administration -->
+
+    <!-- Curve Names -->
+    <string-array name="curve_name_array"> <!-- DON'T DELETE-->
+        <!--X9.62-->
+        <item>c2pnb163v1</item>
+        <item>c2pnb163v2</item>
+        <item>c2pnb163v3</item>
+        <item>c2pnb176w1</item>
+        <item>c2tnb191v1</item>
+        <item>c2tnb191v2</item>
+        <item>c2tnb191v3</item>
+        <item>c2pnb208w1</item>
+        <item>c2tnb239v1</item>
+        <item>c2tnb239v2</item>
+        <item>c2tnb239v3</item>
+        <item>c2pnb272w1</item>
+        <!-- SEC -->
+        <item>sect163k1</item>
+        <item>sect163r1</item>
+        <item>sect163r2</item>
+        <item>sect193r1</item>
+        <item>sect193r2</item>
+        <item>sect233k1</item>
+        <item>sect233r1</item>
+        <item>sect239k1</item>
+        <item>sect283k1</item>
+        <item>sect283r1</item>
+        <!-- NIST -->
+        <item>B-163</item>
+        <item>B-233</item>
+        <item>B-283</item>
+    </string-array>
+    <!-- End Curve Names -->
 
 </resources>

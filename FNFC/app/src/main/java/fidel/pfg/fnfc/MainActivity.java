@@ -35,6 +35,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -46,6 +49,7 @@ import java.util.Random;
 import fidel.pfg.fnfc.core.administration.AdministrationFragment;
 import fidel.pfg.fnfc.ddbb.AppDbSQLiteHelper;
 import fidel.pfg.fnfc.ecc.AppEllipticCurve;
+import fidel.pfg.fnfc.exceptions.CurveNotLoaded;
 import fidel.pfg.fnfc.utils.Utils;
 
 import static android.nfc.NdefRecord.createMime;
@@ -84,35 +88,54 @@ public class MainActivity extends AppCompatActivity {
      * @param q
      * @return nfc value to write
      */
-    public String makeNewRegisterFromUser(String userId, String q){
-        String result = "";
-        String p,val,dbVal;
+    public String makeNewRegisterFromUser(String userId, String q, boolean isTrueUserId){
+        String result = "", dbVal = "", nfcVal = "", pVal = "";
+        ECPoint.F2m p = null, val=null;
+
+        //Set initial state
+        this.bufferWriteString = null;
+        this.dbBufferWriteNewReg = null;
 
         // Q default value
         if(q == null){
             q = "15";
         }
-        userId = AppDbSQLiteHelper.getUserIdFromName(db,userId);
-        Log.i("makeNewRegisterFromUser","got true user as: " + userId);
-        // Retrive a random point form current EC
-        p = this.ecApp.getRandomPoint();
+
+        if(!isTrueUserId){
+            userId = AppDbSQLiteHelper.getUserIdFromName(db,userId);
+            Log.i("makeNewRegisterFromUser","got true user as: " + userId);
+        }
+
+        // Get a random point form current EC
+        try {
+            p = this.ecApp.getRandomPoint();
+        } catch (CurveNotLoaded curveNotLoaded) {
+            curveNotLoaded.printStackTrace();
+        }
 
         // Compute (Q)(K.P) for NFC-T
-        val = this.ecApp.sumECPoint(Integer.parseInt(q),p);
+        val = this.ecApp.addPoint(p, Integer.parseInt(q));
 
-        // Compute (Q+1)(K.P) for DB: sum P + ( (Q).(K.P) )
-        dbVal = this.ecApp.sumECPoint(val,p);
+        // Compute (Q+1)(K.P) for DB, the next value
+        try {
+            dbVal = this.ecApp.encode(this.ecApp.addPointsCustom(val,p));
+            nfcVal = this.ecApp.encode(val);
+            pVal = this.ecApp.encode(p);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        // Save in db if successfull nfc-write operation
-        this.dbBufferWriteNewReg = userId + "," + p + "," + q +","+ dbVal;
+        // Save in db if successful nfc-write operation (userID,p,q, ECPoint encoded)
+        this.dbBufferWriteNewReg = userId + "," + pVal + "," + q + "," + q + "," + dbVal;
 
-        // Make new regiter to write (userId + value of Q.P )
-        this.bufferWriteString = result = userId + "," + val;
+        // Make new regiter to write (userId + value of Q.P as Base64)
+        this.bufferWriteString = result = new String(Base64.encode((userId + "," + nfcVal).getBytes()));
         this.isANewUser = true;
-
-        Log.i("makeNewRegisterFromUser","with nfc value: " + result);
+        Log.i("makeNewRegisterFromUser","with nfc value: " + nfcVal);
+        Log.i("makeNewRegisterFromUser","with nfc value encoded base 64: " + result);
         Log.i("makeNewRegisterFromUser","with db value: " + this.dbBufferWriteNewReg);
-        return result;
+
+        return nfcVal;
     }
 
     /**
@@ -122,15 +145,18 @@ public class MainActivity extends AppCompatActivity {
         Log.i("validateUser","nfc value: " + nfcValue);
         Log.i("validateUser","user id: " + userId);
 
-        String userP=null,userQ=null,userVal=null,nextValue = null;
+        String userP=null, userVal=null;
+        int userQ = 0, userOriginalQ = 0;
         // Retrieve user ECPoint from DB
         Cursor cursor = AppDbSQLiteHelper.getUserInfo(db, userId);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 userP = cursor.getString(cursor
                         .getColumnIndex("p"));
-                userQ = cursor.getString(cursor
-                        .getColumnIndex("q"));
+                userQ = Integer.parseInt(cursor.getString(cursor
+                        .getColumnIndex("q")));
+                userOriginalQ = Integer.parseInt(cursor.getString(cursor
+                        .getColumnIndex("set_q")));
                 userVal = cursor.getString(cursor
                         .getColumnIndex("val"));
                 cursor.moveToNext();
@@ -139,34 +165,44 @@ public class MainActivity extends AppCompatActivity {
             Log.i("validateUser", "Usuario en el sistema, comprobación de clave: "+ userVal);
 
             // Get next value of current nfc value
+            ECPoint.F2m nextValue = null, decodedNfcPoint = null, decodedUserPPoint = null, decodedUserValPoint = null;
             try{
                 Log.i("validateUser", "#####   Try nextValue set");
-                nextValue = this.ecApp.sumECPoint(nfcValue,userP);
+                decodedNfcPoint = this.ecApp.decode(new BigInteger(nfcValue).toString());
+                decodedUserPPoint = this.ecApp.decode(new BigInteger(userP).toString());
+                decodedUserValPoint = this.ecApp.decode(new BigInteger(userVal).toString());
+                nextValue = this.ecApp.addPointsCustom(decodedNfcPoint, decodedUserPPoint);
             }catch(Exception e){
                 e.printStackTrace();
                 Log.i("validateUser", "Usuario en el sistema, no se ha podido obtener la siguiente Key");
+
                 return false;
             }
 
-            Log.i("validateUser","[NextVal]-" + nextValue + " [userValue]-" + userVal);
-            if(userVal != null && userVal.equals(nextValue)){
+            Log.i("validateUser","[Next Val Point]-" + nextValue + "\n[User Value Point]-" + decodedUserValPoint);
+            if(decodedUserValPoint!= null && decodedNfcPoint != null && decodedUserValPoint.equals(nextValue)){
                 Log.i("validateUser","Usuario validado");
-
                 String nfcNewValue = null;
-                int intQ = Integer.parseInt(userQ);
-                if(intQ-1 != 0){
-                    nfcNewValue = this.ecApp.sumECPoint(Integer.parseInt(userQ)-1,userP);
-                }else{
-                    // All validations done, new EC Point for user is requiredd
-                    // [TODO]
-                    // return makeNewRegisterFromUser(userId,null) != null;
+                if(userQ-1 != 0){
+                    try {
+                        nfcNewValue = this.ecApp.encode(this.ecApp.addPoint(decodedUserPPoint, userQ-1));
+                    } catch (CurveNotLoaded curveNotLoaded) {
+                        curveNotLoaded.printStackTrace();
+                    }
+                } else {
+                    // All validations done, new EC Point for user is required
+                    AppDbSQLiteHelper.deleteUserFromDB(db, userId);
+                    nfcNewValue = makeNewRegisterFromUser(userId,Integer.toString(userOriginalQ),true);
+
+                    return true;
                 }
 
                 // Generate new info for user to NFC-T
-                this.bufferWriteString = userId+","+nfcNewValue;
-                Log.i("validateUser","buffer NFC : " + bufferWriteString);
+                Log.i("validateUser","buffer NFC pre encoded: " + userId + "," + nfcNewValue);
+                this.bufferWriteString = new String(Base64.encode((userId + "," + nfcNewValue).getBytes()));
+                Log.i("validateUser","buffer NFC post encoded: " + bufferWriteString);
                 // Generate new info for user to DB
-                this.dbBufferWriteNewReg = userId+","+userP+","+ (intQ-1) +","+nfcValue;
+                this.dbBufferWriteNewReg = userId+","+userP+","+ (userQ-1) +","+nfcValue;
                 Log.i("validateUser","buffer DB : " + dbBufferWriteNewReg);
                 // Be ready to write in NFC-T and validate
                 return true;
@@ -185,36 +221,26 @@ public class MainActivity extends AppCompatActivity {
      * @return true if successful load, else otherwise
      */
     public boolean loadCurrentEC(){
-        String a = null,b = null;
-        int field = -1;
-        BigInteger k = null,r = null, seed= null;
-
+        String name = null;
+        BigInteger k = null;
         Cursor cursor = AppDbSQLiteHelper.getECValues(db);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                field = Integer.parseInt(cursor.getString(cursor
-                        .getColumnIndex("field")));
-                a = cursor.getString(cursor
-                        .getColumnIndex("a"));
-                b = cursor.getString(cursor
-                        .getColumnIndex("b"));
+                name = cursor.getString(cursor
+                        .getColumnIndex("name"));
                 k = new BigInteger(cursor.getString(cursor
                         .getColumnIndex("k")));
-                r = new BigInteger(cursor.getString(cursor
-                        .getColumnIndex("r")));
-                seed = new BigInteger(cursor.getString(cursor
-                        .getColumnIndex("seed")));
-
                 cursor.moveToNext();
             }
 
-            if(seed==null){
+            try {
+                Log.i("loadCurrentEC", "Load a Curve with name : " + name + "\n... and key: " + k.toString());
+                this.ecApp.loadEC(name, k);
+            } catch (CurveNotLoaded curveNotLoaded) {
+                curveNotLoaded.printStackTrace();
+
                 return false;
             }
-
-            Log.i("loadCurrentEC",field +" , "+ a +" , "+ b +" , "+ seed.toString()+" | Keys : "+ k.toString() + "," + r.toString());
-            this.ecApp.loadCurve(field, a, b, seed.toByteArray());
-            this.ecApp.loadKeyPairs(k, r);
 
             return true;
         }
@@ -223,26 +249,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Makes a new EC
-     * @param field
-     * @param a
-     * @param b
+     * Make a new EC
      */
-    public void newEC(int field, String a, String b){
-        // Generate the seed
-        Random rand = new Random();
-        BigInteger seed = new BigInteger(AppEllipticCurve.DEFAULT_SEED_SIZE, rand);
-        this.ecApp = this.ecApp.loadCurve(field, a, b, seed.toByteArray());
-        this.ecApp.newKeyPairs();
+    public void newEC(String curveName){
+
+        // Generate a new private key
+        BigInteger k  = ecApp.newKey();
+        try {
+            this.ecApp.loadEC(curveName, k);
+        } catch (CurveNotLoaded curveNotLoaded) {
+            curveNotLoaded.printStackTrace();
+        }
 
         // Save result to DB
         Log.i("newEC","Saving result");
         AppDbSQLiteHelper.prepareNewSystem(db);
-        AppDbSQLiteHelper.setNewSystem(db, Integer.toString(field), a, b, seed.toString(), this.ecApp.getK().toString(), this.ecApp.getR().toString());
+        AppDbSQLiteHelper.setNewSystem(db, curveName, k.toString());
 
         // BORRAR
-        Utils.setToast(this, getResources().getString(R.string.new_ec_success),
-                Toast.LENGTH_LONG);
+        //Utils.setToast(this, getResources().getString(R.string.success_new_ec),
+        //        Toast.LENGTH_LONG);
         Log.i("newEC","NEW SYSTEM LOADED");
     }
 
@@ -314,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void closeDB(){
         db.close();
-        db=null;
+        db = null;
     }
 
     @Override
@@ -543,7 +569,10 @@ public class MainActivity extends AppCompatActivity {
             String[] techList = tag.getTechList();
             String searchedTech = Ndef.class.getName();
 
+            Log.i("Tech Discovered", "Looking for : " + searchedTech );
             for (String tech : techList) {
+                Log.i("Tech Discovered", "Equals " + searchedTech + " == " +
+                 tech);
                 if (searchedTech.equals(tech)) {
                     new NdefReaderTask(this).execute(tag);
                     break;
@@ -597,7 +626,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // If has buffered elements to write (writing new nfc content)
+            // If has buffered elements to write (writing new nfc content or pend element)
             if(mainActivity.bufferWriteString!=null){
                 try{
                     writeTag(mainActivity.bufferWriteString, tag);
@@ -615,17 +644,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("readResult" , "Post if >> "+ readResult);
                 // Prepare to validation NFC-T content
                 // [TODO]
-
-                String[] results = readResult.split(",");
+                String decodedReadResult = new String(Base64.decode(readResult.getBytes()));
+                String[] results = decodedReadResult.split(",");
                 if(results.length!=2){
                     // Not validated
-                    // [TODO]
-                    Log.i("readResult", "Contenido sin el formato adecuado [" + results.toString() + "] y activity: " + this.mainActivity.getLocalClassName());
+                    Log.i("readResult", "Contenido sin el formato adecuado y activity: " + this.mainActivity.getLocalClassName());
                     showValidationDialog(false);
                     return readResult;
                 }
 
-                Log.i("readResult" , "Results split >> "+ results.toString());
+                Log.i("readResult" , "Results split >> "+ results[0] + " " + results[1]);
                 boolean validated = this.mainActivity.validateUser(results[0],results[1]);
                 if(validated){
                     // Validated ( return result & write )
@@ -635,9 +663,21 @@ public class MainActivity extends AppCompatActivity {
                     String newContent = this.mainActivity.bufferWriteString;
 
                     // Write new content
-                    Log.i("readResult" , "Pre write");
+                    Log.i("readResult", "Pre write");
 
-                    writeTag(newContent, tag);
+
+                    try{
+                        writeTag(newContent, tag);
+                    }catch(Exception e){
+                        Log.i("WriteTag", "Fallo al escribir el contenido");
+                        e.printStackTrace();
+                        mainActivity.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Fallo al escribir, acerque la NFC-T para completar el proceso", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        return readResult;
+                    }
                     Log.i("readResult" , "Post write");
 
                     // Show validated message!
@@ -733,7 +773,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     }
+
                     ndef.writeNdefMessage(message);
+
                     mainActivity.runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.write_ok), Toast.LENGTH_LONG).show();

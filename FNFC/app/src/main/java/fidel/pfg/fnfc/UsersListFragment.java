@@ -73,6 +73,8 @@ public class UsersListFragment extends Fragment {
                 list_row.add( cursor.getString(cursor
                         .getColumnIndex("q")));
                 list_row.add( cursor.getString(cursor
+                        .getColumnIndex("set_q")));
+                list_row.add( cursor.getString(cursor
                         .getColumnIndex("val")));
 
                 Log.i("Row debuggin", list_row.toString());
@@ -148,7 +150,12 @@ public class UsersListFragment extends Fragment {
         tr.addView(td);
 
         td = new TextView(context);
-        td.setText(R.string.key);
+        td.setText(R.string.original_q);
+        this.setCommonCellProperties(context, td);
+        tr.addView(td);
+
+        td = new TextView(context);
+        td.setText(R.string.value);
         this.setCommonCellProperties(context, td);
         tr.addView(td);
 

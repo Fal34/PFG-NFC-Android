@@ -12,8 +12,10 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +32,7 @@ public class AdministrationFragment extends Fragment {
     private Button db_restart_button;
     // System
     private Button ec_create;
-    private EditText input_ec_a;
-    private EditText input_ec_b;
-    private EditText input_ec_field;
+    private Spinner curve_name_spinner;
 
 
     public AdministrationFragment() {
@@ -97,56 +97,48 @@ public class AdministrationFragment extends Fragment {
         });
 
         // Init Elements System EC
-        input_ec_field = (EditText) view.findViewById(R.id.input_ec_field);
-        input_ec_a = (EditText) view.findViewById(R.id.input_ec_a);
-        input_ec_b = (EditText) view.findViewById(R.id.input_ec_b);
 
         // Buton System EC & Onclick
         ec_create = (Button) view.findViewById(R.id.ec_create);
+        curve_name_spinner = (Spinner) view.findViewById(R.id.input_ec_curve_name);
+        // Create an ArrayAdapter using the string array and a default spinner
+        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
+                .createFromResource(view.getContext(), R.array.curve_name_array,
+                        R.layout.spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        staticAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        curve_name_spinner.setAdapter(staticAdapter);
+        curve_name_spinner.setSelection(0);
         ec_create.setOnClickListener(new View.OnClickListener() {
             final Activity currentActivity = getActivity();
+
             @Override
             public void onClick(View v) {
                 // Checks
-                String ec_field = input_ec_field.getText().toString().trim();
-                String ec_a = input_ec_a.getText().toString().trim();
-                String ec_b = input_ec_b.getText().toString().trim();
+                final String curve_name = curve_name_spinner.getSelectedItem().toString().trim();
 
-                if(ec_field.length() == 0
-                        || ec_a.length() == 0
-                        || ec_b.length() == 0){
-                    Utils.setToast(currentActivity, getResources().getString(R.string.error_empty_fields),
-                            Toast.LENGTH_LONG);
-                } else if(ec_a.equals("4") && ec_b.equals("27")){
-                    Utils.setToast(currentActivity, getResources().getString(R.string.error_ec_constrains),
-                            Toast.LENGTH_LONG);
-                } else {
-                    new AlertDialog.Builder(currentActivity)
-                            .setTitle(R.string.ec_restart)
-                            .setMessage(R.string.ec_restart_confirm)
-                            .setIcon(R.drawable.ic_warning)
-                            .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-                                // On Click Dialog EventListener
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    try {
-                                        String ec_field = input_ec_field.getText().toString().trim();
-                                        String ec_a = input_ec_a.getText().toString().trim();
-                                        String ec_b = input_ec_b.getText().toString().trim();
-                                        ((MainActivity) currentActivity).newEC(Integer.parseInt(ec_field), ec_a, ec_b);
-                                    } catch (Exception e) {
-                                        Utils.setToast(currentActivity, getResources().getString(R.string.error_db_restart),
-                                                Toast.LENGTH_LONG);
-                                        return;
-                                    }
-                                    Utils.setToast(currentActivity, getResources().getString(R.string.success_db_restart),
+                new AlertDialog.Builder(currentActivity)
+                        .setTitle(R.string.ec_restart)
+                        .setMessage(R.string.ec_restart_confirm)
+                        .setIcon(R.drawable.ic_warning)
+                        .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                            // On Click Dialog EventListener
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                try {
+                                    ((MainActivity) currentActivity).newEC(curve_name);
+                                } catch (Exception e) {
+                                    Utils.setToast(currentActivity, getResources().getString(R.string.error_new_ec),
                                             Toast.LENGTH_LONG);
-                                    input_ec_field.setText("");
-                                    input_ec_a.setText("");
-                                    input_ec_b.setText("");
+                                    return;
                                 }
-                            })
-                            .setNegativeButton(R.string.cancel, null).show();
-                }
+                                curve_name_spinner.setSelection(0);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, null).show();
             }
         });
 

@@ -75,7 +75,7 @@ public class RegisterFragment extends Fragment {
                                      String q = Integer.toString(user_q_value.getValue());
                                      String userId = users_list_dropdown.getSelectedItem().toString().trim();
                                      Log.i("alertDialog", "UserID Selected: "+ users_list_dropdown.getSelectedItem().toString().trim() + "With Q: "+ q);
-                                     ((MainActivity)currentActivity).makeNewRegisterFromUser(userId, q);
+                                     ((MainActivity)currentActivity).makeNewRegisterFromUser(userId, q, false);
                                  } catch (Exception e) {
                                      e.printStackTrace();
                                      Utils.setToast(currentActivity, getResources().getString(R.string.error_user_register),
