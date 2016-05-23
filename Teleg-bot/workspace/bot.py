@@ -455,7 +455,7 @@ from keepUp import KeepUp
 k = KeepUp()
 user = "sercrash"
 password = "123pimpama"
-target_workspace = "https://ide.c9.io/sercrash/joselu-traitor-bot"
+target_workspace = "https://ide.c9.io/sercrash/sercrash-telebot"
 k.loadTask(user , password , target_workspace)
 #############################################
 

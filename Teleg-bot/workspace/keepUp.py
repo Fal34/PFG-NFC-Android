@@ -46,8 +46,8 @@ class KeepUp:
         max_time = 7179 # 2 hours in seconds (less 21)
         tasktime = randint(min_time, max_time)
         threading.Timer(tasktime, self.load).start()
-        output_content = "Load execution at ", time.ctime(), " waiting ", tasktime , "seconds for the next time."
-        print "[KeepUp] " , output_content
+        output_content = "Load execution at " + str(time.ctime()) + " waiting " + str(tasktime) + " seconds for the next time."
+        print "[KeepUp]" , output_content
         
         from selenium import webdriver
         from selenium.webdriver.common.by import By
@@ -101,10 +101,7 @@ class KeepUp:
         display.stop()
         
         # If temp files outfit disk space
-        # sudo rm -rf /tmp 
-        # sudo mkdir -p /tmp
-        # sudo chmod 777 /tmp
-    
+        # sudo rm -rf /tmp/* 
     # Log method
     def log(self, content = ""):
         log_html = self.directory + self.file_result_html
