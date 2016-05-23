@@ -1,0 +1,210 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+ 
+import telebot 
+# Librería de la API del bot.
+from telebot import types 
+# Tipos para la API del bot.
+import time
+# Librería para hacer que el programa que controla el bot no se acabe.
+import random
+from random import randint
+import re
+import sys
+reload(sys) 
+sys.setdefaultencoding("utf-8")
+# Para la codificación en español
+import PIL
+from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+import os.path
+import textwrap
+# Para el meme generator
+# Loading Fonts….
+# Note the following line works on Ubuntu 12.04
+# On other operating systems you should set the correct path
+# To the font you want to use.
+ 
+TOKEN = '225581471:AAHnOhr8UHLOtgc3GV3yA362EA9wHanu1p4' 
+# Nuestro tokken del bot (el que @BotFather nos dió).
+
+bot = telebot.TeleBot(TOKEN) 
+# Creamos el objeto de nuestro bot.
+#############################################
+#Listener
+def listener(messages): 
+    # Con esto, estamos definiendo una función llamada 'listener', que recibe como parámetro un dato llamado 'messages'.
+    for m in messages: 
+        # Por cada dato 'm' en el dato 'messages'
+        if m.content_type == 'text': 
+            # Filtramos mensajes que sean tipo texto.
+            cid = m.chat.id 
+            # Almacenaremos el ID de la conversación.
+            print "[" + str(cid) + "] "+ m.from_user.first_name+": " + m.text 
+            # Y haremos que imprima algo parecido a esto -> [52033876]: /start
+ 
+bot.set_update_listener(listener) 
+# Así, le decimos al bot que utilice como función escuchadora nuestra función 'listener' declarada arriba.
+#############################################
+#Variables
+insultos = [
+    "He visto orcos más agradables de ver que %s",
+    "No mereces ni caerte de boca en una mierda %s",
+    "%s ojalá te prendan fuego y te apaguen con gasolina",
+    "%s tienes menos futuro que Dubovsky haciendo puenting",ArithmeticError
+    ]
+regex_insultos_white_list = [
+    "s+e+r+c+r+a+s+h+(\w|\d)*",
+    "f+i+d+e+l+(\w|\d)*"
+    ]
+
+contra_insultos = [
+    "Maldito cerdo %s ... buen intento!",
+    "Suerte la próxima vez %s"
+    ]
+#############################################
+#Funciones
+@bot.message_handler(commands=['joselu']) 
+# Indicamos que lo siguiente va a controlar el comando '/roto2'.
+def command_roto2(m): 
+    # Definimos una función que resuelva lo que necesitemos.
+    cid = m.chat.id 
+    # Guardamos el ID de la conversación para poder responder.
+    bot.send_photo( cid, open( 'src/traitor.jpg', 'rb')) 
+    # Con la función 'send_photo()' del bot, enviamos al ID de la conversación que hemos almacenado previamente la foto de nuestro querido :roto2:
+
+@bot.message_handler(commands=['meme']) 
+def command_meme_generator(m): 
+    print "\nComando meme activado con : ", m.text
+    # Definimos una función que resuelva lo que necesitemos.
+    cid = m.chat.id 
+    # Opening the file gg.png
+    
+    # Toma de argumentos
+    mens = m.text.split(" ")
+    if len(mens)<3 :
+        bot.send_message(cid,"Formato incorrecto. Escribe /meme [imagen objetivo] [texto]")
+        return
+    
+    # Carga de la imagen objetivo
+    target_meme = mens[1]
+    imageFile = "src/meme/meme_"+target_meme+".jpg"
+    text = " ".join(mens[2:])
+    # Comprobación si existe la imagen objetivo
+    if not ( os.path.exists(imageFile) ):
+        bot.send_message(cid,"Imagen no existente. Escribe /meme [imagen objetivo] [texto]")
+        return
+
+    # Comprobación del tamaño del texto
+    maxTextLen = 60
+    if not ( len(text)<=maxTextLen ):
+        bot.send_message(cid,"El texto indicado excede el límite permitido ("+str(maxTextLen)+" caracteres)")
+        return
+
+    # Vars para el manejo de la imagen
+    img_fraction = 0.85 # portion of image width you want text width to be
+    maxsize = 50
+    yOffsetCount = 0
+    maxLineLen = 30
+    # Font management
+    isTextFontSizeSetted = False
+    fontsize = 15  # starting font size
+    font = ImageFont.truetype("dev/fonts/impact.ttf", fontsize)
+    
+    # Open de la imagen y toma de sus parámetros
+    im1 = Image.open(imageFile)
+    W, H = im1.size
+    # Draw de la imagen preparado para su edición
+    draw = ImageDraw.Draw(im1)
+    print "Image size : " , W , "x", H
+        
+    splitText = split_every(maxLineLen, text)
+    for textElement in splitText:
+        
+        # Carga del fontsize del texto segun la cantidad del mismo
+        if (not isTextFontSizeSetted):
+            maxLengthTextElement = max(splitText, key=len)
+            while font.getsize(maxLengthTextElement)[0] < img_fraction*W and fontsize <= maxsize:
+                # iterate until the text size is just larger than the criteria
+                fontsize += 1
+                font = ImageFont.truetype("dev/fonts/impact.ttf", fontsize)
+            
+            # optionally de-increment to be sure it is less than criteria
+            fontsize -= 1
+            isTextFontSizeSetted = True
+            font = ImageFont.truetype("dev/fonts/impact.ttf", fontsize)
+            textSizeY = font.getsize(maxLengthTextElement)[1]
+            
+        #w, h = draw.textsize(text)
+        w, h = font.getsize(textElement)
+        x = (W-w)/2
+        y = (H/10) - (h/2) + yOffsetCount
+        print "Text position : [", x ," ," ,y , "]"
+        
+        # Pintado del borde
+        border = 1
+        borderColor = "black"
+        draw.text((x-border, y), textElement, font=font, fill=borderColor)
+        draw.text((x+border, y), textElement, font=font, fill=borderColor)
+        draw.text((x, y-border), textElement, font=font, fill=borderColor)
+        draw.text((x, y+border), textElement, font=font, fill=borderColor)
+        # Pintado del texto
+        draw.text((x,y), textElement, font=font, fill="white")
+        yOffsetCount += textSizeY + 5
+
+    # Save the image with a new name
+    im1.save("tmp/temp_meme.png")
+    bot.send_photo( cid, open( 'tmp/temp_meme.png', 'rb'))
+    
+# Split text utils
+def split_every(n, s):
+    return textwrap.wrap(s, width=n)
+   
+@bot.message_handler(regexp=re.compile("qu[ée] es joselu?.*", re.IGNORECASE))
+def pregunta_message(m):
+    cid = m.chat.id
+    bot.send_message(cid,"UN TRAITOOOR!")
+
+@bot.message_handler(regexp=re.compile("est[aá] roto vladimir?.*", re.IGNORECASE))   
+def add_message(m):
+    cid = m.chat.id 
+    video = open('src/ostia_quinn.mp4', 'rb')
+    bot.send_message(cid,"Mira si lo está!")
+    bot.send_video(cid, video)
+    bot.send_video(cid, "FILEID")
+    
+@bot.message_handler(regexp=re.compile(".*suma (\d+) y (\d+).*", re.IGNORECASE))   
+def give_video_message(m):
+    cid = m.chat.id
+    prog = re.compile("suma (\d+) y (\d+)", re.IGNORECASE)
+    result = prog.match(m.text)
+    x = int(result.group(1));
+    y = int(result.group(2));
+    bot.send_message(cid,result.group(1)+"+"+result.group(2)+"= "+ str(x+y))
+    
+@bot.message_handler(regexp=re.compile(".*insulta (a|al) ([\w\d\s]+)", re.IGNORECASE))   
+def harras_message(m):
+    cid = m.chat.id 
+
+    prog = re.compile(".*insulta (a|al) ([\w\d\s]+)", re.IGNORECASE)
+    result = prog.match(m.text)
+    person = str(result.group(2));
+    
+    print "Persona a insultar : ", person 
+    person_from = str(m.from_user.first_name)
+    for regex in regex_insultos_white_list:
+        prog = re.compile(regex , re.IGNORECASE)
+        result = prog.search(person)
+        if result :
+            print "Se ha encontrado el nombre en la whitelist"
+            insult = contra_insultos[randint(0,len(contra_insultos)-1)] % (person_from)
+            bot.send_message(cid , insult)
+            return
+    print "No se ha encontrado el nombre en la whitelist"
+    insult = insultos[randint(0,len(insultos)-1)] % (person)
+    bot.send_message(cid , insult)
+#############################################
+#Peticiones
+bot.polling(none_stop=True) 
+# Con esto, le decimos al bot que siga funcionando incluso si encuentra algún fallo.
