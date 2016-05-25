@@ -28,7 +28,7 @@ public class AppDbSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i("AppDbSQLiteHelper", "DB Creation!");
-        //initDefaultEntries(db);
+        initDefaultEntries(db);
     }
 
     @Override

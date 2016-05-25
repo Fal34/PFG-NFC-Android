@@ -46,7 +46,9 @@ class KeepUp:
         max_time = 7179 # 2 hours in seconds (less 21)
         tasktime = randint(min_time, max_time)
         threading.Timer(tasktime, self.load).start()
-        output_content = "Load execution at " + str(time.ctime()) + " waiting " + str(tasktime) + " seconds for the next time."
+        tasktime_m , tasktime_s = divmod( tasktime , 60)
+        tasktime_h , tasktime_m = divmod( tasktime_m , 60) 
+        output_content = "Load execution - waiting %dh %02dmin %02dsec for the next time." % (tasktime_h, tasktime_m, tasktime_s)
         print "[KeepUp]" , output_content
         
         from selenium import webdriver

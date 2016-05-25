@@ -54,6 +54,7 @@
     <!-- Users List -->
     <string name="number_symbol">#</string>
     <string name="p">P</string>
+    <string name="kp">kP</string>
     <string name="q">Q</string>
     <string name="original_q">Old Q</string>
     <string name="value">Value</string>

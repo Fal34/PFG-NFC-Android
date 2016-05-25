@@ -643,8 +643,16 @@ public class MainActivity extends AppCompatActivity {
             if(readResult!=null){
                 Log.i("readResult" , "Post if >> "+ readResult);
                 // Prepare to validation NFC-T content
-                // [TODO]
-                String decodedReadResult = new String(Base64.decode(readResult.getBytes()));
+                String decodedReadResult = null;
+                try{
+                    decodedReadResult = new String(Base64.decode(readResult.getBytes()));
+                }catch(Exception e){
+                    e.printStackTrace();
+                    Log.i("readResult", "Contenido sin codificar en base64");
+                    showValidationDialog(false);
+                    return readResult;
+                }
+
                 String[] results = decodedReadResult.split(",");
                 if(results.length!=2){
                     // Not validated

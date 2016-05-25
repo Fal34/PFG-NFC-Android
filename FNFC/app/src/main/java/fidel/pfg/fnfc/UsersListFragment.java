@@ -140,7 +140,7 @@ public class UsersListFragment extends Fragment {
         tr.addView(td);
 
         td = new TextView(context);
-        td.setText(R.string.p);
+        td.setText(R.string.kp);
         this.setCommonCellProperties(context, td);
         tr.addView(td);
 
